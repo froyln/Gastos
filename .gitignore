@@ -1,36 +1,46 @@
-node_modules/
-.expo/
-dist/
-web-build/
-expo-env.d.ts
 
-*.log
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-.DS_Store
-*.pem
-
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-
-ios/
+.aider*
+/android
 android/
-
-.env
-.env.local
-.env.*.local
-
-.idea/
-.vscode/
-*.swp
-
-plan.md
 .claude/
 .cursor/
-.aider*
+# debug
+# dependencies
+dist/
+.DS_Store
+.env
+.env*.local
+.env.*.local
+.env.local
+.expo/
+# Expo
+expo-env.d.ts
+# generated native folders
+.idea/
+/ios
+ios/
+*.jks
+*.key
+.kotlin/
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# local env files
+*.log
+# macOS
+# Metro
+.metro-health-check*
+*.mobileprovision
+# Native
+node_modules/
+npm-debug.*
+*.orig.*
+*.p12
+*.p8
+*.pem
+plan.md
+*.swp
+*.tsbuildinfo
+# typescript
+.vscode/
+web-build/
+yarn-debug.*
+yarn-error.*
