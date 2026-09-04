@@ -18,6 +18,8 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="modal/new-expense" options={{ presentation: "modal" }} />
+        <Stack.Screen name="modal/edit-expense" options={{ presentation: "modal" }} />
+        <Stack.Screen name="modal/wallet-form" options={{ presentation: "modal" }} />
       </Stack>
     </SafeAreaProvider>
   );

@@ -23,6 +23,17 @@ export function isInPeriod(date: string, period: string, monthStartDay: number):
   return periodOf(date, monthStartDay) === period;
 }
 
+export function shiftPeriod(period: string, delta: number): string {
+  const [year, month] = period.split("-").map(Number);
+  const date = new Date(year, month - 1 + delta, 1);
+  return periodKey(date.getFullYear(), date.getMonth());
+}
+
+export function formatPeriod(period: string): string {
+  const [year, month] = period.split("-").map(Number);
+  return new Date(year, month - 1, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+}
+
 export function periodRange(period: string, monthStartDay: number): { start: Date; end: Date } {
   const [year, month] = period.split("-").map(Number);
   return {
