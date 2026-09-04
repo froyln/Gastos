@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Pressable, ScrollView, View } from "react-native";
 
 import { Text } from "@/components/ui/Text";
-import { colors } from "@/constants/theme";
+import { useThemeColors } from "@/constants/theme";
 import { formatPeriod } from "@/lib/date";
 import type { Category, Wallet } from "@/types";
 
@@ -29,6 +29,8 @@ export function ExpenseFilters({
   selectedWalletId,
   onSelectWallet,
 }: Props) {
+  const colors = useThemeColors();
+
   return (
     <View className="gap-sm py-sm">
       <View className="flex-row items-center justify-between px-lg">

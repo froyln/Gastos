@@ -20,6 +20,7 @@ type WalletState = {
   updateWallet: (id: string, changes: Partial<Pick<Wallet, "name" | "type" | "color">>) => void;
   archiveWallet: (id: string) => void;
   adjustBalance: (id: string, delta: number) => void;
+  setInitialBalance: (id: string, amount: number) => void;
 };
 
 export const useWalletStore = create<WalletState>()(
@@ -53,6 +54,14 @@ export const useWalletStore = create<WalletState>()(
         set((state) => ({
           wallets: state.wallets.map((wallet) =>
             wallet.id === id ? { ...wallet, balance: roundAmount(wallet.balance + delta) } : wallet,
+          ),
+        })),
+      setInitialBalance: (id, amount) =>
+        set((state) => ({
+          wallets: state.wallets.map((wallet) =>
+            wallet.id === id
+              ? { ...wallet, balance: roundAmount(amount), initialBalance: roundAmount(amount) }
+              : wallet,
           ),
         })),
     }),

@@ -7,6 +7,7 @@ import { RecurringCard } from "@/components/recurring/RecurringCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Text } from "@/components/ui/Text";
 import { currentPeriod } from "@/lib/date";
+import { hapticImpact } from "@/lib/haptics";
 import { requestPermissions } from "@/lib/notifications";
 import { useRecurringStore } from "@/store/useRecurringStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
@@ -121,7 +122,10 @@ export default function SettingsScreen() {
             currency={currency}
             isPaidThisPeriod={item.lastPaidPeriod === period}
             onPress={() => router.push({ pathname: "/modal/recurring-form", params: { id: item.id } })}
-            onMarkPaid={() => markPaid(item.id, period)}
+            onMarkPaid={() => {
+              markPaid(item.id, period);
+              hapticImpact();
+            }}
           />
         )}
       />

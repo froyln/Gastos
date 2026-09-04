@@ -1,7 +1,7 @@
 import { TextInput, View } from "react-native";
 
 import { Text } from "@/components/ui/Text";
-import { colors } from "@/constants/theme";
+import { useThemeColors } from "@/constants/theme";
 import { useSettingsStore } from "@/store/useSettingsStore";
 
 type Props = {
@@ -10,6 +10,7 @@ type Props = {
 };
 
 export function AmountInput({ value, onChangeText }: Props) {
+  const colors = useThemeColors();
   const currency = useSettingsStore((s) => s.currency);
 
   return (

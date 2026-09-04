@@ -2,9 +2,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { Tabs, router } from "expo-router";
 import { Pressable, View } from "react-native";
 
-import { colors } from "@/constants/theme";
+import { useThemeColors } from "@/constants/theme";
 
 export default function TabsLayout() {
+  const colors = useThemeColors();
+
   return (
     <View className="flex-1">
       <Tabs
@@ -48,7 +50,7 @@ export default function TabsLayout() {
         onPress={() => router.push("/modal/new-expense")}
         className="absolute bottom-24 right-lg h-14 w-14 items-center justify-center rounded-full bg-accent"
       >
-        <Ionicons name="add" size={28} color="#FFFFFF" />
+        <Ionicons name="add" size={28} color="white" />
       </Pressable>
     </View>
   );

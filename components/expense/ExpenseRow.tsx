@@ -3,7 +3,7 @@ import type { ComponentProps } from "react";
 import { View } from "react-native";
 
 import { Text } from "@/components/ui/Text";
-import { colors } from "@/constants/theme";
+import { useThemeColors } from "@/constants/theme";
 import { formatDate } from "@/lib/date";
 import { formatAmount } from "@/lib/money";
 import type { Category, Expense, Wallet } from "@/types";
@@ -18,6 +18,7 @@ type Props = {
 };
 
 export function ExpenseRow({ expense, category, wallet, currency }: Props) {
+  const colors = useThemeColors();
   const iconName = (category?.icon ?? "help-circle") as IconName;
 
   return (

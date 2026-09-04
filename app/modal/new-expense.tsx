@@ -9,13 +9,15 @@ import { MerchantSuggestions } from "@/components/expense/MerchantSuggestions";
 import { WalletPicker } from "@/components/expense/WalletPicker";
 import { Button } from "@/components/ui/Button";
 import { Text } from "@/components/ui/Text";
-import { colors } from "@/constants/theme";
+import { useThemeColors } from "@/constants/theme";
+import { hapticSuccess } from "@/lib/haptics";
 import { parseAmount } from "@/lib/money";
 import { useCategoryStore } from "@/store/useCategoryStore";
 import { useExpenseStore } from "@/store/useExpenseStore";
 import { useWalletStore } from "@/store/useWalletStore";
 
 export default function NewExpenseModal() {
+  const colors = useThemeColors();
   const allCategories = useCategoryStore((s) => s.categories);
   const allWallets = useWalletStore((s) => s.wallets);
   const categories = useMemo(() => allCategories.filter((category) => !category.archived), [allCategories]);
@@ -44,6 +46,7 @@ export default function NewExpenseModal() {
       merchant: merchant.trim() || null,
       date: new Date().toISOString(),
     });
+    hapticSuccess();
     router.back();
   }
 

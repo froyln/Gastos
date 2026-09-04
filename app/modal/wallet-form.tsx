@@ -5,7 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/Button";
 import { Text } from "@/components/ui/Text";
-import { colors } from "@/constants/theme";
+import { useThemeColors } from "@/constants/theme";
+import { hapticSuccess } from "@/lib/haptics";
 import { parseAmount, roundAmount } from "@/lib/money";
 import { useWalletStore } from "@/store/useWalletStore";
 import type { WalletType } from "@/types";
@@ -14,6 +15,7 @@ const WALLET_COLORS = ["#16A34A", "#DC2626", "#2563EB", "#F59E0B", "#7C3AED", "#
 const WALLET_TYPES: WalletType[] = ["cash", "debit", "credit", "prepaid"];
 
 export default function WalletFormModal() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const wallets = useWalletStore((s) => s.wallets);
   const addWallet = useWalletStore((s) => s.addWallet);
@@ -42,6 +44,7 @@ export default function WalletFormModal() {
     } else {
       addWallet({ name: name.trim(), type, color, initialBalance: balance });
     }
+    hapticSuccess();
     router.back();
   }
 

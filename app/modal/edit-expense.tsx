@@ -9,13 +9,15 @@ import { MerchantSuggestions } from "@/components/expense/MerchantSuggestions";
 import { WalletPicker } from "@/components/expense/WalletPicker";
 import { Button } from "@/components/ui/Button";
 import { Text } from "@/components/ui/Text";
-import { colors } from "@/constants/theme";
+import { useThemeColors } from "@/constants/theme";
+import { hapticSuccess } from "@/lib/haptics";
 import { parseAmount } from "@/lib/money";
 import { useCategoryStore } from "@/store/useCategoryStore";
 import { useExpenseStore } from "@/store/useExpenseStore";
 import { useWalletStore } from "@/store/useWalletStore";
 
 export default function EditExpenseModal() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const allExpenses = useExpenseStore((s) => s.expenses);
   const allCategories = useCategoryStore((s) => s.categories);
@@ -56,6 +58,7 @@ export default function EditExpenseModal() {
       walletId,
       merchant: merchant.trim() || null,
     });
+    hapticSuccess();
     router.back();
   }
 

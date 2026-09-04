@@ -7,12 +7,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Text } from "@/components/ui/Text";
 import { WalletCard } from "@/components/wallet/WalletCard";
-import { colors } from "@/constants/theme";
+import { useThemeColors } from "@/constants/theme";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { useWalletStore } from "@/store/useWalletStore";
 import type { Wallet } from "@/types";
 
 export default function WalletsScreen() {
+  const colors = useThemeColors();
   const allWallets = useWalletStore((s) => s.wallets);
   const currency = useSettingsStore((s) => s.currency);
   const wallets = useMemo(() => allWallets.filter((wallet) => !wallet.archived), [allWallets]);

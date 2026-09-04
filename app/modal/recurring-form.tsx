@@ -7,13 +7,15 @@ import { CategoryPicker } from "@/components/expense/CategoryPicker";
 import { WalletPicker } from "@/components/expense/WalletPicker";
 import { Button } from "@/components/ui/Button";
 import { Text } from "@/components/ui/Text";
-import { colors } from "@/constants/theme";
+import { useThemeColors } from "@/constants/theme";
+import { hapticSuccess } from "@/lib/haptics";
 import { parseAmount } from "@/lib/money";
 import { useCategoryStore } from "@/store/useCategoryStore";
 import { useRecurringStore } from "@/store/useRecurringStore";
 import { useWalletStore } from "@/store/useWalletStore";
 
 export default function RecurringFormModal() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const recurringPayments = useRecurringStore((s) => s.recurringPayments);
   const addRecurring = useRecurringStore((s) => s.addRecurring);
@@ -69,6 +71,7 @@ export default function RecurringFormModal() {
     } else {
       addRecurring({ name: name.trim(), amount, categoryId, walletId, dayStart, dayEnd, notificationHour });
     }
+    hapticSuccess();
     router.back();
   }
 
