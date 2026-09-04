@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ScrollView, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -16,8 +16,10 @@ import { useExpenseStore } from "@/store/useExpenseStore";
 import { useWalletStore } from "@/store/useWalletStore";
 
 export default function NewExpenseModal() {
-  const categories = useCategoryStore((s) => s.categories.filter((category) => !category.archived));
-  const wallets = useWalletStore((s) => s.wallets.filter((wallet) => !wallet.archived));
+  const allCategories = useCategoryStore((s) => s.categories);
+  const allWallets = useWalletStore((s) => s.wallets);
+  const categories = useMemo(() => allCategories.filter((category) => !category.archived), [allCategories]);
+  const wallets = useMemo(() => allWallets.filter((wallet) => !wallet.archived), [allWallets]);
   const addExpense = useExpenseStore((s) => s.addExpense);
 
   const [amountText, setAmountText] = useState("");
@@ -28,6 +30,10 @@ export default function NewExpenseModal() {
   const selectedCategory = categories.find((category) => category.id === categoryId);
   const amount = parseAmount(amountText);
   const canSave = amount > 0 && categoryId !== null && walletId !== "";
+
+  function handleSelectCategory(id: string) {
+    setCategoryId((current) => (current === id ? null : id));
+  }
 
   function handleSave() {
     if (!canSave || categoryId === null) return;
@@ -50,7 +56,7 @@ export default function NewExpenseModal() {
           <Text variant="subtitle" className="px-lg">
             Category
           </Text>
-          <CategoryPicker categories={categories} selectedId={categoryId} onSelect={setCategoryId} />
+          <CategoryPicker categories={categories} selectedId={categoryId} onSelect={handleSelectCategory} />
         </View>
 
         <View className="gap-sm">
