@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 import { generateId } from "@/lib/id";
 import { roundAmount } from "@/lib/money";
+import { cancelRecurring, scheduleRecurring } from "@/lib/notifications";
 import { mmkvStorage } from "@/lib/storage";
 import type { RecurringPayment } from "@/types";
 
@@ -55,33 +56,50 @@ export const useRecurringStore = create<RecurringState>()(
           lastPaidPeriod: null,
         };
         set((state) => ({ recurringPayments: [...state.recurringPayments, payment] }));
+        scheduleRecurring(payment);
         return payment;
       },
-      updateRecurring: (id, changes) =>
+      updateRecurring: (id, changes) => {
+        let updated: RecurringPayment | undefined;
         set((state) => ({
           recurringPayments: state.recurringPayments.map((payment) => {
             if (payment.id !== id) return payment;
             const next = { ...payment, ...changes };
             assertValidWindow(next.dayStart, next.dayEnd);
+            updated = next;
             return next;
           }),
-        })),
-      deleteRecurring: (id) =>
+        }));
+        if (updated) scheduleRecurring(updated);
+      },
+      deleteRecurring: (id) => {
         set((state) => ({
           recurringPayments: state.recurringPayments.filter((payment) => payment.id !== id),
-        })),
-      setActive: (id, active) =>
+        }));
+        cancelRecurring(id);
+      },
+      setActive: (id, active) => {
+        let updated: RecurringPayment | undefined;
         set((state) => ({
-          recurringPayments: state.recurringPayments.map((payment) =>
-            payment.id === id ? { ...payment, active } : payment,
-          ),
-        })),
-      markPaid: (id, period) =>
+          recurringPayments: state.recurringPayments.map((payment) => {
+            if (payment.id !== id) return payment;
+            updated = { ...payment, active };
+            return updated;
+          }),
+        }));
+        if (updated) scheduleRecurring(updated);
+      },
+      markPaid: (id, period) => {
+        let updated: RecurringPayment | undefined;
         set((state) => ({
-          recurringPayments: state.recurringPayments.map((payment) =>
-            payment.id === id ? { ...payment, lastPaidPeriod: period } : payment,
-          ),
-        })),
+          recurringPayments: state.recurringPayments.map((payment) => {
+            if (payment.id !== id) return payment;
+            updated = { ...payment, lastPaidPeriod: period };
+            return updated;
+          }),
+        }));
+        if (updated) scheduleRecurring(updated);
+      },
     }),
     { name: "tracker.recurring", storage: createJSONStorage(() => mmkvStorage) },
   ),
