@@ -34,3 +34,16 @@ export function periodRange(period: string, monthStartDay: number): { start: Dat
 export function formatDate(date: string): string {
   return new Date(date).toLocaleDateString();
 }
+
+export function daysUntilNextOccurrence(dayStart: number, dayEnd: number, from: Date = new Date()): number {
+  const today = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+  const day = today.getDate();
+  if (day >= dayStart && day <= dayEnd) return 0;
+
+  const target =
+    day < dayStart
+      ? new Date(today.getFullYear(), today.getMonth(), dayStart)
+      : new Date(today.getFullYear(), today.getMonth() + 1, dayStart);
+
+  return Math.round((target.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));
+}

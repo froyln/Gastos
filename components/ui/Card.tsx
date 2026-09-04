@@ -1,0 +1,17 @@
+import type { ReactNode } from "react";
+import { View, type ViewProps } from "react-native";
+
+type Props = ViewProps & {
+  children: ReactNode;
+};
+
+export function Card({ className, children, ...props }: Props) {
+  const classes = className
+    ? `rounded-2xl border border-border bg-surface p-md ${className}`
+    : "rounded-2xl border border-border bg-surface p-md";
+  return (
+    <View className={classes} {...props}>
+      {children}
+    </View>
+  );
+}
