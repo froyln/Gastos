@@ -13,7 +13,7 @@
     --color-danger: 220 38 38;
   }
 
-  .dark {
+  .dark:root {
     --color-background: 17 17 17;
     --color-surface: 28 28 30;
     --color-border: 42 42 44;
