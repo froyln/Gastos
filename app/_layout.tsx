@@ -17,6 +17,7 @@ export default function RootLayout() {
       <StatusBar style="auto" />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="modal/new-expense" options={{ presentation: "modal" }} />
       </Stack>
     </SafeAreaProvider>
   );
