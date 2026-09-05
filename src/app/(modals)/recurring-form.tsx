@@ -6,8 +6,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { CategoryPicker } from "@/features/categories/CategoryPicker";
 import { WalletPicker } from "@/features/wallets/WalletPicker";
 import { Button } from "@/shared/ui/Button";
-import { NumberStepper } from "@/shared/ui/NumberStepper";
+import { HourPicker } from "@/shared/ui/HourPicker";
 import { Text } from "@/shared/ui/Text";
+import { WheelPicker } from "@/shared/ui/WheelPicker";
 import { useThemeColors } from "@/shared/theme";
 import { hapticSuccess } from "@/shared/lib/haptics";
 import { parseAmount } from "@/shared/lib/money";
@@ -126,7 +127,7 @@ export default function RecurringFormModal() {
         </View>
 
         <View className="gap-sm">
-          <NumberStepper
+          <WheelPicker
             label="Day start"
             hint="Remind me the payment window opened"
             value={dayStart}
@@ -134,7 +135,7 @@ export default function RecurringFormModal() {
             max={31}
             onChange={handleDayStartChange}
           />
-          <NumberStepper
+          <WheelPicker
             label="Day end"
             hint="Remind me again if still unpaid by this day"
             value={dayEnd}
@@ -142,15 +143,7 @@ export default function RecurringFormModal() {
             max={31}
             onChange={setDayEnd}
           />
-          <NumberStepper
-            label="Reminder hour"
-            hint="24-hour local time"
-            value={notificationHour}
-            min={0}
-            max={23}
-            onChange={setNotificationHour}
-            formatValue={(hour) => `${String(hour).padStart(2, "0")}:00`}
-          />
+          <HourPicker label="Reminder hour" hint="24-hour local time" hour={notificationHour} onChange={setNotificationHour} />
         </View>
 
         {isEditing ? (
