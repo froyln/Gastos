@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { CategoryPicker } from "@/features/categories/CategoryPicker";
 import { WalletPicker } from "@/features/wallets/WalletPicker";
 import { Button } from "@/shared/ui/Button";
+import { NumberStepper } from "@/shared/ui/NumberStepper";
 import { Text } from "@/shared/ui/Text";
 import { useThemeColors } from "@/shared/theme";
 import { hapticSuccess } from "@/shared/lib/haptics";
@@ -37,26 +38,24 @@ export default function RecurringFormModal() {
   const [walletId, setWalletId] = useState(
     payment?.walletId ?? wallets.find((wallet) => wallet.isDefault)?.id ?? wallets[0]?.id ?? "",
   );
-  const [dayStartText, setDayStartText] = useState(payment ? String(payment.dayStart) : "1");
-  const [dayEndText, setDayEndText] = useState(payment ? String(payment.dayEnd) : "5");
-  const [hourText, setHourText] = useState(payment ? String(payment.notificationHour) : "9");
+  const [dayStart, setDayStart] = useState(payment?.dayStart ?? 1);
+  const [dayEnd, setDayEnd] = useState(payment?.dayEnd ?? 5);
+  const [notificationHour, setNotificationHour] = useState(payment?.notificationHour ?? 9);
   const [active, setActiveState] = useState(payment?.active ?? true);
 
   const amount = parseAmount(amountText);
-  const dayStart = Math.round(Number(dayStartText)) || 0;
-  const dayEnd = Math.round(Number(dayEndText)) || 0;
-  const notificationHour = Math.min(23, Math.max(0, Math.round(Number(hourText)) || 0));
 
   const canSave =
     name.trim().length > 0 &&
     amount > 0 &&
     categoryId !== null &&
     walletId !== "" &&
-    dayStart >= 1 &&
-    dayStart <= 31 &&
-    dayEnd >= 1 &&
-    dayEnd <= 31 &&
     dayStart <= dayEnd;
+
+  function handleDayStartChange(next: number) {
+    setDayStart(next);
+    if (next > dayEnd) setDayEnd(next);
+  }
 
   function handleSelectCategory(nextId: string) {
     setCategoryId((current) => (current === nextId ? null : nextId));
@@ -126,34 +125,32 @@ export default function RecurringFormModal() {
           <WalletPicker wallets={wallets} selectedId={walletId} onSelect={setWalletId} />
         </View>
 
-        <View className="flex-row gap-sm">
-          <View className="flex-1 gap-sm">
-            <Text variant="subtitle">Day start</Text>
-            <TextInput
-              value={dayStartText}
-              onChangeText={setDayStartText}
-              keyboardType="number-pad"
-              className="min-h-11 rounded-xl border border-border bg-surface px-md text-text"
-            />
-          </View>
-          <View className="flex-1 gap-sm">
-            <Text variant="subtitle">Day end</Text>
-            <TextInput
-              value={dayEndText}
-              onChangeText={setDayEndText}
-              keyboardType="number-pad"
-              className="min-h-11 rounded-xl border border-border bg-surface px-md text-text"
-            />
-          </View>
-          <View className="flex-1 gap-sm">
-            <Text variant="subtitle">Hour</Text>
-            <TextInput
-              value={hourText}
-              onChangeText={setHourText}
-              keyboardType="number-pad"
-              className="min-h-11 rounded-xl border border-border bg-surface px-md text-text"
-            />
-          </View>
+        <View className="gap-sm">
+          <NumberStepper
+            label="Day start"
+            hint="Remind me the payment window opened"
+            value={dayStart}
+            min={1}
+            max={31}
+            onChange={handleDayStartChange}
+          />
+          <NumberStepper
+            label="Day end"
+            hint="Remind me again if still unpaid by this day"
+            value={dayEnd}
+            min={dayStart}
+            max={31}
+            onChange={setDayEnd}
+          />
+          <NumberStepper
+            label="Reminder hour"
+            hint="24-hour local time"
+            value={notificationHour}
+            min={0}
+            max={23}
+            onChange={setNotificationHour}
+            formatValue={(hour) => `${String(hour).padStart(2, "0")}:00`}
+          />
         </View>
 
         {isEditing ? (
