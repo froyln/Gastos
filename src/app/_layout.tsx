@@ -29,10 +29,10 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="new-expense" options={{ presentation: "modal" }} />
-        <Stack.Screen name="edit-expense" options={{ presentation: "modal" }} />
-        <Stack.Screen name="wallet-form" options={{ presentation: "modal" }} />
-        <Stack.Screen name="recurring-form" options={{ presentation: "modal" }} />
+        <Stack.Screen name="(modals)/new-expense" options={{ presentation: "modal" }} />
+        <Stack.Screen name="(modals)/edit-expense" options={{ presentation: "modal" }} />
+        <Stack.Screen name="(modals)/wallet-form" options={{ presentation: "modal" }} />
+        <Stack.Screen name="(modals)/recurring-form" options={{ presentation: "modal" }} />
       </Stack>
     </SafeAreaProvider>
   );
