@@ -1,8 +1,23 @@
-/** @type {import('tailwindcss').Config} */
+const plugin = require("tailwindcss/plugin");
+const { light, dark } = require("./src/shared/colors");
+
+function toRgbTriplet(hex) {
+  const value = parseInt(hex.slice(1), 16);
+  const r = (value >> 16) & 255;
+  const g = (value >> 8) & 255;
+  const b = value & 255;
+  return `${r} ${g} ${b}`;
+}
+
+function toCssVars(colors) {
+  return Object.fromEntries(
+    Object.entries(colors).map(([name, hex]) => [`--color-${name}`, toRgbTriplet(hex)])
+  );
+}
+
 module.exports = {
   content: [
-    "./app/**/*.{js,jsx,ts,tsx}",
-    "./components/**/*.{js,jsx,ts,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx}",
   ],
   presets: [require("nativewind/preset")],
   theme: {
@@ -26,5 +41,12 @@ module.exports = {
     },
   },
   darkMode: "class",
-  plugins: [],
+  plugins: [
+    plugin(({ addBase }) => {
+      addBase({
+        ":root": toCssVars(light),
+        ".dark:root": toCssVars(dark),
+      });
+    }),
+  ],
 };
