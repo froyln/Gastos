@@ -73,7 +73,3 @@ export async function scheduleRecurring(payment: RecurringPayment): Promise<void
     });
   }
 }
-
-export async function rescheduleAll(payments: RecurringPayment[]): Promise<void> {
-  await Promise.all(payments.map((payment) => scheduleRecurring(payment)));
-}

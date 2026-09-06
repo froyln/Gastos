@@ -6,7 +6,7 @@ import { colorScheme } from "nativewind";
 import { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { rescheduleAll } from "@/features/recurring/notifications";
+import { scheduleRecurring } from "@/features/recurring/notifications";
 import { runSeedIfNeeded } from "@/shared/seed";
 import { useRecurringStore } from "@/features/recurring/useRecurringStore";
 import { useSettingsStore } from "@/features/settings/useSettingsStore";
@@ -16,7 +16,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     runSeedIfNeeded();
-    rescheduleAll(useRecurringStore.getState().recurringPayments);
+    Promise.all(useRecurringStore.getState().recurringPayments.map(scheduleRecurring));
   }, []);
 
   useEffect(() => {
