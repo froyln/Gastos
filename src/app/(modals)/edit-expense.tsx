@@ -1,38 +1,18 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useMemo, useState } from "react";
-import { Alert, ScrollView, TextInput, View } from "react-native";
+import { Alert, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { AmountInput } from "@/features/expenses/AmountInput";
-import { CategoryPicker } from "@/features/categories/CategoryPicker";
-import { MerchantSuggestions } from "@/features/expenses/MerchantSuggestions";
-import { WalletPicker } from "@/features/wallets/WalletPicker";
+import { ExpenseForm } from "@/features/expenses/ExpenseForm";
 import { Button } from "@/shared/ui/Button";
 import { Text } from "@/shared/ui/Text";
-import { useThemeColors } from "@/shared/theme";
 import { hapticSuccess } from "@/shared/lib/haptics";
-import { parseAmount } from "@/shared/lib/money";
-import { useCategoryStore } from "@/features/categories/useCategoryStore";
 import { useExpenseStore } from "@/features/expenses/useExpenseStore";
-import { useWalletStore } from "@/features/wallets/useWalletStore";
 
 export default function EditExpenseModal() {
-  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const allExpenses = useExpenseStore((s) => s.expenses);
-  const allCategories = useCategoryStore((s) => s.categories);
-  const allWallets = useWalletStore((s) => s.wallets);
+  const expense = useExpenseStore((s) => s.expenses.find((item) => item.id === id));
   const updateExpense = useExpenseStore((s) => s.updateExpense);
   const deleteExpense = useExpenseStore((s) => s.deleteExpense);
-
-  const expense = allExpenses.find((item) => item.id === id);
-  const categories = useMemo(() => allCategories.filter((category) => !category.archived), [allCategories]);
-  const wallets = useMemo(() => allWallets.filter((wallet) => !wallet.archived), [allWallets]);
-
-  const [amountText, setAmountText] = useState(() => (expense ? String(expense.amount) : ""));
-  const [categoryId, setCategoryId] = useState<string | null>(expense?.categoryId ?? null);
-  const [walletId, setWalletId] = useState(expense?.walletId ?? "");
-  const [merchant, setMerchant] = useState(expense?.merchant ?? "");
 
   if (!expense) {
     return (
@@ -42,22 +22,8 @@ export default function EditExpenseModal() {
     );
   }
 
-  const selectedCategory = categories.find((category) => category.id === categoryId);
-  const amount = parseAmount(amountText);
-  const canSave = amount > 0 && categoryId !== null && walletId !== "";
-
-  function handleSelectCategory(nextId: string) {
-    setCategoryId((current) => (current === nextId ? null : nextId));
-  }
-
-  function handleSave() {
-    if (!canSave || categoryId === null) return;
-    updateExpense(expense!.id, {
-      amount,
-      categoryId,
-      walletId,
-      merchant: merchant.trim() || null,
-    });
+  function handleSave(input: { amount: number; categoryId: string; walletId: string; merchant: string | null }) {
+    updateExpense(expense!.id, input);
     hapticSuccess();
     router.back();
   }
@@ -79,38 +45,9 @@ export default function EditExpenseModal() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <ScrollView contentContainerClassName="gap-lg pb-xl">
-        <AmountInput value={amountText} onChangeText={setAmountText} />
-
-        <View className="gap-sm">
-          <Text variant="subtitle" className="px-lg">
-            Category
-          </Text>
-          <CategoryPicker categories={categories} selectedId={categoryId} onSelect={handleSelectCategory} />
-        </View>
-
-        <View className="gap-sm">
-          <Text variant="subtitle" className="px-lg">
-            Wallet
-          </Text>
-          <WalletPicker wallets={wallets} selectedId={walletId} onSelect={setWalletId} />
-        </View>
-
-        <View className="gap-sm px-lg">
-          <Text variant="subtitle">Merchant</Text>
-          <TextInput
-            value={merchant}
-            onChangeText={setMerchant}
-            placeholder="Optional"
-            placeholderTextColor={colors.muted}
-            className="min-h-11 rounded-xl border border-border bg-surface px-md text-text"
-          />
-        </View>
-        {selectedCategory ? <MerchantSuggestions merchants={selectedCategory.merchants} onSelect={setMerchant} /> : null}
-
-        <View className="gap-sm px-lg">
-          <Button label="Save" onPress={handleSave} disabled={!canSave} />
+        <ExpenseForm initialExpense={expense} onSave={handleSave}>
           <Button label="Delete" variant="secondary" onPress={handleDelete} />
-        </View>
+        </ExpenseForm>
       </ScrollView>
     </SafeAreaView>
   );
