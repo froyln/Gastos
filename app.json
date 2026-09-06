@@ -21,8 +21,7 @@
             "backgroundColor": "#111111"
           }
         }
-      ],
-      "@react-native-community/datetimepicker"
+      ]
     ],
     "ios": {
       "supportsTablet": true

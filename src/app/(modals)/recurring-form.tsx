@@ -6,7 +6,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { CategoryPicker } from "@/features/categories/CategoryPicker";
 import { WalletPicker } from "@/features/wallets/WalletPicker";
 import { Button } from "@/shared/ui/Button";
-import { HourPicker } from "@/shared/ui/HourPicker";
 import { Text } from "@/shared/ui/Text";
 import { WheelPicker } from "@/shared/ui/WheelPicker";
 import { useThemeColors } from "@/shared/theme";
@@ -143,7 +142,15 @@ export default function RecurringFormModal() {
             max={31}
             onChange={setDayEnd}
           />
-          <HourPicker label="Reminder hour" hint="24-hour local time" hour={notificationHour} onChange={setNotificationHour} />
+          <WheelPicker
+            label="Reminder hour"
+            hint="24-hour local time"
+            value={notificationHour}
+            min={0}
+            max={23}
+            onChange={setNotificationHour}
+            formatValue={(value) => `${String(value).padStart(2, "0")}:00`}
+          />
         </View>
 
         {isEditing ? (

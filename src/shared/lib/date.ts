@@ -34,14 +34,6 @@ export function formatPeriod(period: string): string {
   return new Date(year, month - 1, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" });
 }
 
-export function periodRange(period: string, monthStartDay: number): { start: Date; end: Date } {
-  const [year, month] = period.split("-").map(Number);
-  return {
-    start: new Date(year, month - 1, monthStartDay),
-    end: new Date(year, month, monthStartDay),
-  };
-}
-
 export function formatDate(date: string): string {
   return new Date(date).toLocaleDateString();
 }

@@ -18,7 +18,7 @@ type Props = TextProps & {
 };
 
 export function Text({ variant = "body", className, children, ...props }: Props) {
-  const classes = className ? `${variantClasses[variant]} ${className}` : variantClasses[variant];
+  const classes = `${variantClasses[variant]} ${className ?? ""}`;
   return (
     <RNText className={classes} {...props}>
       {children}

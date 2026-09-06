@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { isInPeriod } from "@/shared/lib/date";
 import { generateId } from "@/shared/lib/id";
 import { roundAmount } from "@/shared/lib/money";
 import { mmkvStorage } from "@/shared/lib/storage";
@@ -31,7 +30,6 @@ type NewIncomeInput = {
 type ExpenseState = {
   expenses: Expense[];
   incomes: Income[];
-  setAll: (expenses: Expense[], incomes: Income[]) => void;
   addExpense: (input: NewExpenseInput) => Expense;
   updateExpense: (id: string, changes: ExpenseChanges) => void;
   deleteExpense: (id: string) => void;
@@ -63,7 +61,6 @@ export const useExpenseStore = create<ExpenseState>()(
     (set, get) => ({
       expenses: [],
       incomes: [],
-      setAll: (expenses, incomes) => set({ expenses, incomes }),
       addExpense: (input) => {
         assertValidAmount(input.amount);
         assertValidDate(input.date);
@@ -142,11 +139,3 @@ export const useExpenseStore = create<ExpenseState>()(
     { name: "tracker.expenses", storage: createJSONStorage(() => mmkvStorage) },
   ),
 );
-
-export function selectExpensesInPeriod(expenses: Expense[], period: string, monthStartDay: number): Expense[] {
-  return expenses.filter((expense) => isInPeriod(expense.date, period, monthStartDay));
-}
-
-export function selectExpensesByCategory(expenses: Expense[], categoryId: string): Expense[] {
-  return expenses.filter((expense) => expense.categoryId === categoryId);
-}

@@ -23,7 +23,6 @@ type RecurringChanges = Partial<NewRecurringInput>;
 
 type RecurringState = {
   recurringPayments: RecurringPayment[];
-  setAll: (recurringPayments: RecurringPayment[]) => void;
   addRecurring: (input: NewRecurringInput) => RecurringPayment;
   updateRecurring: (id: string, changes: RecurringChanges) => void;
   deleteRecurring: (id: string) => void;
@@ -41,7 +40,6 @@ export const useRecurringStore = create<RecurringState>()(
   persist(
     (set, get) => ({
       recurringPayments: [],
-      setAll: (recurringPayments) => set({ recurringPayments }),
       addRecurring: (input) => {
         assertValidWindow(input.dayStart, input.dayEnd);
 

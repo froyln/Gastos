@@ -6,9 +6,7 @@ type Props = ViewProps & {
 };
 
 export function Card({ className, children, ...props }: Props) {
-  const classes = className
-    ? `rounded-2xl border border-border bg-surface p-md ${className}`
-    : "rounded-2xl border border-border bg-surface p-md";
+  const classes = `rounded-2xl border border-border bg-surface p-md ${className ?? ""}`;
   return (
     <View className={classes} {...props}>
       {children}
