@@ -32,6 +32,13 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
+          name="recurring"
+          options={{
+            title: "Recurring",
+            tabBarIcon: ({ color, size }) => <Ionicons name="repeat" color={color} size={size} />,
+          }}
+        />
+        <Tabs.Screen
           name="wallets"
           options={{
             title: "Wallets",

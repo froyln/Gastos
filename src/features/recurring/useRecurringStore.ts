@@ -2,10 +2,12 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import { generateId } from "@/shared/lib/id";
+import { isInPeriod } from "@/shared/lib/date";
 import { roundAmount } from "@/shared/lib/money";
 import { cancelRecurring, scheduleRecurring } from "@/features/recurring/notifications";
 import { mmkvStorage } from "@/shared/lib/storage";
-import type { RecurringPayment } from "@/shared/types";
+import { useExpenseStore } from "@/features/expenses/useExpenseStore";
+import type { Expense, RecurringPayment } from "@/shared/types";
 
 type NewRecurringInput = {
   name: string;
@@ -37,7 +39,7 @@ function assertValidWindow(dayStart: number, dayEnd: number) {
 
 export const useRecurringStore = create<RecurringState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       recurringPayments: [],
       setAll: (recurringPayments) => set({ recurringPayments }),
       addRecurring: (input) => {
@@ -90,11 +92,24 @@ export const useRecurringStore = create<RecurringState>()(
         if (updated) scheduleRecurring(updated);
       },
       markPaid: (id, period) => {
+        const payment = get().recurringPayments.find((item) => item.id === id);
+        if (!payment || payment.lastPaidPeriod === period) return;
+
+        useExpenseStore.getState().addExpense({
+          amount: payment.amount,
+          categoryId: payment.categoryId,
+          walletId: payment.walletId,
+          merchant: payment.name,
+          note: null,
+          date: new Date().toISOString(),
+          recurringId: payment.id,
+        });
+
         let updated: RecurringPayment | undefined;
         set((state) => ({
-          recurringPayments: state.recurringPayments.map((payment) => {
-            if (payment.id !== id) return payment;
-            updated = { ...payment, lastPaidPeriod: period };
+          recurringPayments: state.recurringPayments.map((item) => {
+            if (item.id !== id) return item;
+            updated = { ...item, lastPaidPeriod: period };
             return updated;
           }),
         }));
@@ -104,3 +119,14 @@ export const useRecurringStore = create<RecurringState>()(
     { name: "tracker.recurring", storage: createJSONStorage(() => mmkvStorage) },
   ),
 );
+
+export function selectIsPaidInPeriod(
+  expenses: Expense[],
+  recurringId: string,
+  period: string,
+  monthStartDay: number,
+): boolean {
+  return expenses.some(
+    (expense) => expense.recurringId === recurringId && isInPeriod(expense.date, period, monthStartDay),
+  );
+}
